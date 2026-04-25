@@ -3,322 +3,272 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Шпаргалка ВПР История 7 класс</title>
+    <title>Mega VPR Cheat Sheet</title>
     <style>
         :root {
-            --bg-color: #f0f2f5;
-            --card-bg: #ffffff;
-            --text-main: #333333;
-            --text-muted: #666666;
-            --accent: #007bff;
-            --accent-hover: #0056b3;
+            --bg: #f8f9fa;
+            --card: #ffffff;
+            --text: #212529;
+            --accent: #e63946;
+            --border: #dee2e6;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-main);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
             margin: 0;
-            padding: 0;
-            padding-top: 130px; /* Отступ для фиксированной шапки */
+            padding: 140px 15px 20px; /* Отступ под шапку */
         }
 
-        /* Фиксированная шапка */
         .header {
             position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            background-color: var(--card-bg);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            top: 0; left: 0; right: 0;
+            background: var(--card);
             padding: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
             z-index: 100;
         }
 
-        /* Строка поиска */
-        .search-box {
+        .search-input {
             width: 100%;
-            padding: 12px 15px;
+            padding: 14px;
             font-size: 16px;
-            border: 1px solid #ddd;
+            border: 2px solid var(--border);
             border-radius: 12px;
             box-sizing: border-box;
-            outline: none;
-            transition: border-color 0.3s;
-            margin-bottom: 12px;
+            margin-bottom: 15px;
+            transition: border-color 0.2s;
         }
 
-        .search-box:focus {
+        .search-input:focus {
             border-color: var(--accent);
+            outline: none;
         }
 
-        /* Овальные кнопки фильтров */
         .filters {
             display: flex;
             gap: 10px;
             overflow-x: auto;
+            scrollbar-width: none;
             padding-bottom: 5px;
-            scrollbar-width: none; /* Скрытие скроллбара Firefox */
         }
-        
-        .filters::-webkit-scrollbar {
-            display: none; /* Скрытие скроллбара Chrome/Safari */
-        }
+        .filters::-webkit-scrollbar { display: none; }
 
-        .filter-btn {
-            background-color: #e4e6eb;
+        .btn {
+            background: var(--border);
             border: none;
-            padding: 8px 16px;
-            border-radius: 20px; /* Овальная форма */
-            font-size: 14px;
-            color: var(--text-main);
-            cursor: pointer;
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-weight: 500;
             white-space: nowrap;
-            transition: all 0.2s;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
         }
 
-        .filter-btn.active {
-            background-color: var(--accent);
+        .btn.active {
+            background: var(--accent);
             color: white;
         }
 
-        /* Список данных */
-        .content {
-            padding: 15px;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .card {
-            background-color: var(--card-bg);
-            border-radius: 16px;
-            padding: 15px;
-            margin-bottom: 15px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
-            display: flex;
-            gap: 15px;
-            align-items: flex-start;
-        }
-
-        .card-text {
-            flex-grow: 1;
-        }
-
-        .card-title {
-            font-size: 18px;
-            font-weight: bold;
-            margin: 0 0 5px 0;
-            color: var(--accent);
-        }
-
-        .card-desc {
-            font-size: 15px;
-            line-height: 1.5;
-            margin: 0 0 10px 0;
-        }
-
-        .card-tags {
-            font-size: 12px;
-            color: var(--text-muted);
-            background: #f0f0f0;
-            padding: 4px 8px;
-            border-radius: 8px;
-            display: inline-block;
-        }
-
-        /* Работа с картинками */
-        .card-img-container {
-            flex-shrink: 0;
-            width: 80px;
-            height: 80px;
+        /* Аккордеон / Карточки */
+        .item {
+            background: var(--card);
             border-radius: 12px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.04);
             overflow: hidden;
+        }
+
+        .item-header {
+            padding: 15px;
+            font-size: 16px;
+            font-weight: 600;
             cursor: pointer;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-
-        .card-img-container img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        /* Модальное окно для полноэкранной картинки */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(0,0,0,0.8);
-            z-index: 1000;
-            justify-content: center;
+            display: flex;
+            justify-content: space-between;
             align-items: center;
-            padding: 20px;
-            backdrop-filter: blur(5px);
         }
 
-        .modal img {
-            max-width: 100%;
-            max-height: 100%;
-            border-radius: 12px;
-            box-shadow: 0 5px 25px rgba(0,0,0,0.5);
+        .item-header:active {
+            background: #f1f1f1;
+        }
+
+        .item-body {
+            padding: 0 15px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out, padding 0.3s ease;
+            background: #fafafa;
+            border-top: 1px solid transparent;
+            font-size: 14px;
+            line-height: 1.5;
+            color: #495057;
+        }
+
+        .item.open .item-body {
+            max-height: 500px; /* Достаточно для текста */
+            padding: 15px;
+            border-top-color: var(--border);
+        }
+
+        .badge {
+            font-size: 11px;
+            background: #e9ecef;
+            padding: 3px 8px;
+            border-radius: 6px;
+            margin-right: 5px;
+            color: #6c757d;
+        }
+        
+        .badges-container {
+            margin-top: 10px;
         }
 
         .no-results {
             text-align: center;
-            color: var(--text-muted);
-            margin-top: 50px;
-            font-size: 16px;
+            color: #adb5bd;
+            margin-top: 30px;
         }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <input type="text" id="searchInput" class="search-box" placeholder="🔍 Поиск (например: Опричнина, 1565...)">
+        <input type="text" id="search" class="search-input" placeholder="Введите дату, букву или слово...">
         <div class="filters">
-            <button class="filter-btn active" data-filter="Все">Все</button>
-            <button class="filter-btn" data-filter="16 век">16 век</button>
-            <button class="filter-btn" data-filter="17 век">17 век</button>
-            <button class="filter-btn" data-filter="Термин">Термины</button>
-            <button class="filter-btn" data-filter="Деятель">Деятели</button>
-            <button class="filter-btn" data-filter="Дата">Даты</button>
+            <button class="btn active" data-f="Все">Все</button>
+            <button class="btn" data-f="Россия">Россия</button>
+            <button class="btn" data-f="Мир">Всемирная</button>
+            <button class="btn" data-f="Термин">Термины</button>
+            <button class="btn" data-f="Деятель">Личности</button>
         </div>
     </div>
 
-    <div class="content" id="dataList">
-        </div>
-
-    <div id="imageModal" class="modal">
-        <img id="modalImg" src="" alt="Full size">
-    </div>
+    <div id="list"></div>
 
     <script>
-        // БАЗА ДАННЫХ (заполняй по учебнику Мединского сюда)
-        // tags - это категории, по которым работают овальные кнопки.
-        // image - ссылка на картинку (если картинки нет, оставь пустые кавычки "").
-        const historyData = [
-            {
-                title: "Иван IV Грозный",
-                desc: "Великий князь московский и всея Руси с 1533 года, первый венчанный царь всея Руси (1547). Провел реформы Избранной рады, ввел опричнину.",
-                tags: ["16 век", "Деятель"],
-                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Vasnetsov_Ioann_4.jpg/200px-Vasnetsov_Ioann_4.jpg"
-            },
-            {
-                title: "Опричнина",
-                desc: "Система чрезвычайных мер Ивана Грозного в 1565–1572 годах, направленная на борьбу с предполагаемой изменой в боярской среде. Сопровождалась террором.",
-                tags: ["16 век", "Термин"],
-                image: ""
-            },
-            {
-                title: "1598-1613 гг.",
-                desc: "Смутное время в России. Эпоха глубокого кризиса государства, вызванного пресечением династии Рюриковичей, вмешательством Польши и Швеции, а также восстаниями.",
-                tags: ["17 век", "Дата", "Термин"],
-                image: ""
-            },
-            {
-                title: "Абсолютизм",
-                desc: "Форма правления, при которой верховная власть неограниченно принадлежит одному лицу — монарху. Начала складываться в Европе в период Нового времени.",
-                tags: ["Термин"],
-                image: ""
-            },
-            {
-                title: "Мартин Лютер",
-                desc: "Христианский богослов, инициатор Реформации в Германии (1517 год — 95 тезисов). Выступал против индульгенций католической церкви.",
-                tags: ["16 век", "Деятель"],
-                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Martin_Luther_by_Cranach-restoration.jpg/200px-Martin_Luther_by_Cranach-restoration.jpg"
-            },
-            {
-                title: "Соборное уложение (1649)",
-                desc: "Свод законов Русского царства, принятый Земским собором при Алексее Михайловиче. Окончательно оформило крепостное право.",
-                tags: ["17 век", "Дата", "Термин"],
-                image: ""
-            }
+        // БОЛЬШАЯ БАЗА ДАННЫХ ДЛЯ 7 КЛАССА ВПР
+        const db = [
+            // ИСТОРИЯ РОССИИ
+            { name: "Венчание на царство Ивана IV", date: "1547 г.", desc: "Иван Грозный принял царский титул. Это уравняло его с европейскими монархами и возвысило над русскими боярами.", tags: ["Россия"] },
+            { name: "Взятие Казани", date: "1552 г.", desc: "Присоединение Казанского ханства к России войсками Ивана Грозного. Контроль над Волжским торговым путем.", tags: ["Россия"] },
+            { name: "Взятие Астрахани", date: "1556 г.", desc: "Присоединение Астраханского ханства. Волга стала полностью русской рекой.", tags: ["Россия"] },
+            { name: "Ливонская война", date: "1558-1583 гг.", desc: "Война России за выход к Балтийскому морю. Закончилась тяжелым поражением и потерей ряда земель.", tags: ["Россия"] },
+            { name: "Опричнина", date: "1565-1572 гг.", desc: "Политика террора Ивана Грозного. Разделение страны на земщину и опричнину, цель — уничтожение боярской оппозиции.", tags: ["Россия", "Термин"] },
+            { name: "Поход Ермака в Сибирь", date: "1581-1585 гг.", desc: "Начало освоения Сибири русскими казаками и присоединение Сибирского ханства хана Кучума.", tags: ["Россия"] },
+            { name: "Учреждение патриаршества", date: "1589 г.", desc: "Первым русским патриархом стал Иов. Русская православная церковь стала полностью независимой.", tags: ["Россия"] },
+            { name: "Смутное время", date: "1598-1613 гг.", desc: "Глубокий кризис государства: пресечение династии Рюриковичей, самозванцы, польско-шведская интервенция.", tags: ["Россия", "Термин"] },
+            { name: "Восстание Ивана Болотникова", date: "1606-1607 гг.", desc: "Крупное антиправительственное выступление в период Смуты против Василия Шуйского.", tags: ["Россия"] },
+            { name: "Второе народное ополчение", date: "1612 г.", desc: "Ополчение под руководством Минина и Пожарского. Освободило Москву от польских интервентов.", tags: ["Россия"] },
+            { name: "Избрание Михаила Романова", date: "1613 г.", desc: "Земский собор выбрал нового царя. Начало правления династии Романовых и конец Смуты.", tags: ["Россия"] },
+            { name: "Смоленская война", date: "1632-1634 гг.", desc: "Неудачная попытка России вернуть Смоленск, захваченный Польшей в годы Смуты.", tags: ["Россия"] },
+            { name: "Соляной бунт", date: "1648 г.", desc: "Восстание в Москве из-за введения высокой пошлины на соль (косвенный налог).", tags: ["Россия"] },
+            { name: "Соборное уложение", date: "1649 г.", desc: "Свод законов царя Алексея Михайловича. Окончательно юридически оформило крепостное право в России (отмена Юрьева дня).", tags: ["Россия", "Термин"] },
+            { name: "Переяславская рада", date: "1654 г.", desc: "Собрание представителей запорожского казачества во главе с Богданом Хмельницким, принявшее решение о вхождении Левобережной Украины в состав России.", tags: ["Россия"] },
+            { name: "Медный бунт", date: "1662 г.", desc: "Восстание в Москве из-за обесценивания медных денег, которые правительство приравняло к серебряным.", tags: ["Россия"] },
+            { name: "Восстание Степана Разина", date: "1670-1671 гг.", desc: "Масштабное казацко-крестьянское восстание на Дону и в Поволжье.", tags: ["Россия"] },
+            { name: "Земский собор", date: "XVI-XVII вв.", desc: "Высшее сословно-представительное учреждение Русского царства. Собирался царем для решения важнейших вопросов.", tags: ["Россия", "Термин"] },
+            { name: "Заповедные лета", date: "С 1581 г.", desc: "Годы, в которые запрещался переход крестьян от одного помещика к другому в Юрьев день.", tags: ["Россия", "Термин"] },
+            { name: "Урочные лета", date: "С 1597 г.", desc: "Срок сыска беглых крестьян (изначально 5 лет). По Соборному уложению 1649 г. стал бессрочным.", tags: ["Россия", "Термин"] },
+            { name: "Иван Грозный", date: "1533-1584 гг.", desc: "Первый русский царь. Провел реформы Избранной рады, присоединил Поволжье, ввел опричнину.", tags: ["Россия", "Деятель"] },
+            { name: "Алексей Михайлович Тишайший", date: "1645-1676 гг.", desc: "Второй царь из династии Романовых. При нем принято Соборное уложение, произошел церковный раскол.", tags: ["Россия", "Деятель"] },
+            { name: "Патриарх Никон", date: "XVII век", desc: "Провел церковную реформу (исправление книг по греческим образцам, крещение тремя перстами), что привело к расколу церкви и появлению старообрядцев.", tags: ["Россия", "Деятель"] },
+
+            // ВСЕМИРНАЯ ИСТОРИЯ
+            { name: "Открытие Америки Колумбом", date: "1492 г.", desc: "Христофор Колумб в поисках морского пути в Индию открыл новый континент — Америку. Начало Великих географических открытий.", tags: ["Мир"] },
+            { name: "Первое кругосветное плавание", date: "1519-1522 гг.", desc: "Экспедиция Фернана Магеллана. Практически доказала шарообразность Земли и наличие единого Мирового океана.", tags: ["Мир"] },
+            { name: "Начало Реформации", date: "1517 г.", desc: "Выступление Мартина Лютера с «95 тезисами» против индульгенций. Раскол католической церкви и появление протестантизма.", tags: ["Мир"] },
+            { name: "Аугсбургский религиозный мир", date: "1555 г.", desc: "Договор, закрепивший принцип «чья власть, того и вера» в Германии. Уравнял в правах католиков и лютеран.", tags: ["Мир"] },
+            { name: "Варфоломеевская ночь", date: "1572 г.", desc: "Массовая резня гугенотов (французских протестантов) католиками во Франции.", tags: ["Мир"] },
+            { name: "Нантский эдикт", date: "1598 г.", desc: "Указ Генриха IV Французского. Даровал гугенотам свободу вероисповедания, завершив религиозные войны во Франции.", tags: ["Мир"] },
+            { name: "Разгром Непобедимой армады", date: "1588 г.", desc: "Поражение огромного испанского флота от английских кораблей и шторма. Переход статуса владычицы морей к Англии.", tags: ["Мир"] },
+            { name: "Тридцатилетняя война", date: "1618-1648 гг.", desc: "Первый общеевропейский конфликт. Начался как религиозная война (католики vs протестанты), закончился борьбой за гегемонию в Европе.", tags: ["Мир"] },
+            { name: "Вестфальский мир", date: "1648 г.", desc: "Договор, завершивший Тридцатилетнюю войну. Заложил основы современных международных отношений (государственный суверенитет).", tags: ["Мир"] },
+            { name: "Начало Английской революции", date: "1640 г.", desc: "Созыв Долгого парламента королем Карлом I Стюартом. Конфликт короля и парламента перерос в гражданскую войну.", tags: ["Мир"] },
+            { name: "Казнь Карла I", date: "1649 г.", desc: "Англия провозглашена республикой. Пик Английской буржуазной революции.", tags: ["Мир"] },
+            { name: "Славная революция", date: "1688 г.", desc: "Бескровный государственный переворот в Англии. Свержение Якова II Стюарта, установление парламентской монархии.", tags: ["Мир"] },
+            { name: "Абсолютизм", date: "XVI-XVIII вв.", desc: "Форма правления, при которой власть монарха никем и ничем не ограничена (опирается на армию и бюрократию).", tags: ["Мир", "Термин"] },
+            { name: "Протестантизм", date: "С XVI в.", desc: "Одно из главных направлений христианства, отделившееся от католицизма в ходе Реформации.", tags: ["Мир", "Термин"] },
+            { name: "Мануфактура", date: "XVI-XVIII вв.", desc: "Предприятие, основанное на ручном труде наемных работников и разделении труда.", tags: ["Мир", "Термин"] },
+            { name: "Мартин Лютер", date: "1483-1546 гг.", desc: "Немецкий богослов, инициатор Реформации.", tags: ["Мир", "Деятель"] },
+            { name: "Оливер Кромвель", date: "1599-1658 гг.", desc: "Вождь Английской революции, создатель армии «железнобоких», лорд-протектор Англии.", tags: ["Мир", "Деятель"] }
         ];
 
-        // 1. Автоматическая сортировка по алфавиту
-        historyData.sort((a, b) => a.title.localeCompare(b.title));
+        // Алфавитная сортировка по умолчанию
+        db.sort((a, b) => a.name.localeCompare(b.name));
 
-        const dataList = document.getElementById('dataList');
-        const searchInput = document.getElementById('searchInput');
-        const filterBtns = document.querySelectorAll('.filter-btn');
+        const listEl = document.getElementById('list');
+        const searchEl = document.getElementById('search');
+        const btns = document.querySelectorAll('.btn');
         let currentFilter = 'Все';
 
-        // Функция отрисовки карточек
-        function renderCards() {
-            dataList.innerHTML = '';
-            const query = searchInput.value.toLowerCase();
-            
-            // Фильтрация данных
-            const filteredData = historyData.filter(item => {
-                // Проверка поиска (ищет и в заголовке, и в описании)
-                const matchesSearch = item.title.toLowerCase().includes(query) || item.desc.toLowerCase().includes(query);
-                // Проверка кнопок-категорий
-                const matchesFilter = currentFilter === 'Все' || item.tags.includes(currentFilter);
-                
-                return matchesSearch && matchesFilter;
+        function render() {
+            listEl.innerHTML = '';
+            const q = searchEl.value.toLowerCase();
+
+            const filtered = db.filter(item => {
+                // Ищем совпадения в названии, дате и описании
+                const textMatch = item.name.toLowerCase().includes(q) || 
+                                  item.date.toLowerCase().includes(q) || 
+                                  item.desc.toLowerCase().includes(q);
+                const tagMatch = currentFilter === 'Все' || item.tags.includes(currentFilter);
+                return textMatch && tagMatch;
             });
 
-            if (filteredData.length === 0) {
-                dataList.innerHTML = '<div class="no-results">Ничего не найдено 😔</div>';
+            if (filtered.length === 0) {
+                listEl.innerHTML = '<div class="no-results">Ничего не найдено</div>';
                 return;
             }
 
-            // Создание HTML для каждой карточки
-            filteredData.forEach(item => {
-                const card = document.createElement('div');
-                card.className = 'card';
+            filtered.forEach(item => {
+                const el = document.createElement('div');
+                el.className = 'item';
                 
-                let imgHtml = '';
-                if (item.image) {
-                    imgHtml = `
-                    <div class="card-img-container" onclick="openModal('${item.image}')">
-                        <img src="${item.image}" alt="${item.title}">
-                    </div>`;
-                }
+                // Рендер тегов
+                const tagsHtml = item.tags.map(t => `<span class="badge">${t}</span>`).join('');
 
-                card.innerHTML = `
-                    <div class="card-text">
-                        <h3 class="card-title">${item.title}</h3>
-                        <p class="card-desc">${item.desc}</p>
-                        <div class="card-tags">${item.tags.join(', ')}</div>
+                el.innerHTML = `
+                    <div class="item-header">
+                        <span>${item.name} (${item.date})</span>
+                        <span style="color:#adb5bd; font-size: 12px;">▼</span>
                     </div>
-                    ${imgHtml}
+                    <div class="item-body">
+                        ${item.desc}
+                        <div class="badges-container">${tagsHtml}</div>
+                    </div>
                 `;
-                dataList.appendChild(card);
+
+                // Логика разворачивания карточки (аккордеон)
+                el.querySelector('.item-header').addEventListener('click', () => {
+                    const isOpen = el.classList.contains('open');
+                    // Закрываем все остальные (раскомментируй следующие 3 строки, если нужно, чтобы открытой была только одна)
+                    // document.querySelectorAll('.item').forEach(i => {
+                    //    i.classList.remove('open');
+                    // });
+                    if (!isOpen) {
+                        el.classList.add('open');
+                    } else {
+                        el.classList.remove('open');
+                    }
+                });
+
+                listEl.appendChild(el);
             });
         }
 
-        // Слушатели событий для поиска
-        searchInput.addEventListener('input', renderCards);
+        searchEl.addEventListener('input', render);
 
-        // Слушатели событий для овальных кнопок
-        filterBtns.forEach(btn => {
+        btns.forEach(btn => {
             btn.addEventListener('click', () => {
-                filterBtns.forEach(b => b.classList.remove('active'));
+                btns.forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
-                currentFilter = btn.getAttribute('data-filter');
-                renderCards();
+                currentFilter = btn.getAttribute('data-f');
+                render();
             });
         });
 
-        // Логика модального окна для картинок
-        const modal = document.getElementById('imageModal');
-        const modalImg = document.getElementById('modalImg');
-
-        window.openModal = function(imgSrc) {
-            modalImg.src = imgSrc;
-            modal.style.display = 'flex';
-        }
-
-        modal.addEventListener('click', () => {
-            modal.style.display = 'none';
-        });
-
-        // Первичная отрисовка
-        renderCards();
+        render(); // Первичная отрисовка
     </script>
 </body>
 </html>
