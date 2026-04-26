@@ -292,22 +292,32 @@
 
     let currentTag = 'Все';
 
-    // Умный поиск: игнорирует пробелы, регистр и ищет вхождения частей слов
+   // Ультра-поиск: ищет по отдельным разбросанным буквам в любом порядке
     function fuzzyMatch(item, query) {
-        const target = (item.name + item.date + item.info + item.tags.join('')).toLowerCase().replace(/\s/g, '');
-        const searchParts = query.toLowerCase().trim().split(/\s+/);
+        // Склеиваем весь текст карточки в одну строку и переводим в нижний регистр
+        let target = (item.name + (item.date || '') + item.info + item.tags.join('')).toLowerCase();
         
-        return searchParts.every(part => {
-            const cleanPart = part.replace(/\s/g, '');
-            return target.includes(cleanPart);
-        });
+        // Убираем из запроса все пробелы и переводим в нижний регистр
+        const cleanQuery = query.toLowerCase().replace(/\s/g, '');
+
+        // Проходимся по каждой букве из твоего запроса
+        for (let char of cleanQuery) {
+            // Ищем эту букву в тексте карточки
+            const index = target.indexOf(char);
+            
+            if (index !== -1) {
+                // Если буква нашлась, "вырезаем" её из текста, 
+                // чтобы не посчитать одну и ту же букву дважды (например, если ищешь "ааа")
+                target = target.slice(0, index) + target.slice(index + 1);
+            } else {
+                // Если хотя бы одной буквы из запроса нет в карточке — совпадения нет
+                return false;
+            }
+        }
+        
+        // Если цикл дошел до конца, значит все буквы нашлись
+        return true;
     }
-
-    function render() {
-        const list = document.getElementById('list');
-        const query = document.getElementById('search').value;
-        list.innerHTML = '';
-
         // Сортировка по алфавиту для удобства
         const sortedDB = [...historyDB].sort((a, b) => a.name.localeCompare(b.name));
 
