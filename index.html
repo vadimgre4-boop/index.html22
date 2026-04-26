@@ -120,14 +120,16 @@
 </head>
 <body>
 
-    <div class="header-fixed">
-        <input type="text" id="search" class="search-bar" placeholder="Поиск (дата или слово)..." autocomplete="off">
-        <div class="filters">
-            <button class="f-btn active" onclick="filter('Все', this)">Все</button>
-            <button class="f-btn" onclick="filter('Россия', this)">Россия</button>
-            <button class="f-btn" onclick="filter('Мир', this)">Мир</button>
-            <button class="f-btn" onclick="filter('Термин', this)">Термины</button>
-            <button class="f-btn" onclick="filter('Деятель', this)">Деятели</button>
+<div class="filters">
+    <button class="filter-btn active" data-filter="Все">Все</button>
+    <button class="filter-btn" data-filter="16 век">16 век</button>
+    <button class="filter-btn" data-filter="17 век">17 век</button>
+    <button class="filter-btn" data-filter="Зарубежье">Зарубежье</button>
+    <button class="filter-btn" data-filter="Картинка">🖼️ Картинки</button>
+    <button class="filter-btn" data-filter="Термин">Термины</button>
+    <button class="filter-btn" data-filter="Деятель">Деятели</button>
+    <button class="filter-btn" data-filter="Дата">Даты</button>
+</div>
         </div>
     </div>
 
