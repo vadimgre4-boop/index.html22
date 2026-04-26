@@ -137,7 +137,7 @@
 <body>
 
 <div class="header-fixed">
-    <input type="text" id="search" class="search-bar" placeholder="Поиск (н-р: ивнгроз)..." autocomplete="off">
+    <input type="text" id="search" class="search-bar" placeholder="Поиск (н-р: иван гроз)..." autocomplete="off">
     <div class="filters">
         <button class="f-btn active" onclick="setFilter('Все', this)">Все</button>
         <button class="f-btn" onclick="setFilter('16 век', this)">16 век</button>
@@ -293,20 +293,18 @@
 
     let currentTag = 'Все';
 
-    function fuzzyMatch(item, query) {
-        let target = (item.name + (item.date || '') + item.info + item.tags.join('')).toLowerCase();
-        const cleanQuery = query.toLowerCase().replace(/\s/g, '');
-        if (!cleanQuery) return true;
-
-        for (let char of cleanQuery) {
-            const index = target.indexOf(char);
-            if (index !== -1) {
-                target = target.slice(0, index) + target.slice(index + 1);
-            } else {
-                return false;
-            }
-        }
-        return true;
+    // Умный поиск по словам (вместо хаотичного по буквам)
+    function smartSearch(item, query) {
+        if (!query.trim()) return true;
+        
+        // Собираем весь текст карточки в одну строку
+        const target = (item.name + " " + (item.date || '') + " " + item.info + " " + item.tags.join(' ')).toLowerCase();
+        
+        // Разбиваем запрос пользователя на отдельные слова
+        const words = query.toLowerCase().trim().split(/\s+/);
+        
+        // Возвращаем true, если КАЖДОЕ слово из запроса найдено в тексте карточки
+        return words.every(word => target.includes(word));
     }
 
     function render() {
@@ -316,10 +314,9 @@
         
         list.innerHTML = '';
         
-        const sortedDB = [...historyDB].sort((a, b) => a.name.localeCompare(b.name));
-
-        const filtered = sortedDB.filter(item => {
-            const matchesSearch = fuzzyMatch(item, query);
+        // Мы убрали .sort()! Теперь порядок в приложении точно такой же, как в массиве historyDB
+        const filtered = historyDB.filter(item => {
+            const matchesSearch = smartSearch(item, query);
             const matchesTag = currentTag === 'Все' || item.tags.includes(currentTag);
             return matchesSearch && matchesTag;
         });
