@@ -334,8 +334,8 @@
         });
 
         if (filtered.length === 0) {
-            list.innerHTML = `<div class="no-data">${query ? 'Ничего не найдено' : 'База данных пуста'}</div>`;
-            return;
+            list.innerHTML = ' <div class="no-data">${query ? 'Ничего не найдено' : 'База данных пуста'}</div>';
+            render();
         }
 
         filtered.forEach(item => {
