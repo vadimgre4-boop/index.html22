@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>History Assistant v2.0</title>
     <style>
-        /* СТИЛИ: Тёмная тема для скрытности */
         :root {
             --bg: #1a1a1a;
             --surface: #2d2d2d;
@@ -20,11 +19,12 @@
             background-color: var(--bg);
             color: var(--text-main);
             margin: 0;
-            padding-top: 110px; /* Место для шапки */
+            padding-top: 115px;
             -webkit-tap-highlight-color: transparent;
+            overflow-x: hidden;
         }
 
-        /* Фиксированная шапка */
+        /* Фиксированная панель управления */
         .header-fixed {
             position: fixed;
             top: 0; left: 0; right: 0;
@@ -34,7 +34,6 @@
             z-index: 1000;
         }
 
-        /* Поле поиска */
         .search-bar {
             width: 100%;
             background: var(--surface);
@@ -45,16 +44,17 @@
             font-size: 16px;
             box-sizing: border-box;
             outline: none;
+            transition: border-color 0.2s;
         }
 
         .search-bar:focus { border-color: var(--accent); }
 
-        /* Фильтры (овальные кнопки) */
+        /* Фильтры */
         .filters {
             display: flex;
             gap: 8px;
             overflow-x: auto;
-            padding: 10px 0;
+            padding: 10px 0 5px 0;
             scrollbar-width: none;
         }
         .filters::-webkit-scrollbar { display: none; }
@@ -68,6 +68,7 @@
             white-space: nowrap;
             font-size: 13px;
             cursor: pointer;
+            transition: all 0.2s;
         }
         .f-btn.active {
             background: var(--accent);
@@ -75,8 +76,8 @@
             border-color: var(--accent);
         }
 
-        /* Список элементов */
-        .content { padding: 0 10px 20px; }
+        /* Контент */
+        .content { padding: 5px 10px 20px; }
 
         .card {
             background: var(--surface);
@@ -84,7 +85,7 @@
             margin-bottom: 8px;
             border: 1px solid var(--border);
             overflow: hidden;
-            transition: all 0.2s;
+            transition: border-color 0.2s;
         }
 
         .card-header {
@@ -98,9 +99,12 @@
         .card-title {
             font-size: 15px;
             font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
 
-        .card-title span { color: var(--accent); margin-left: 5px; }
+        .card-title span { color: var(--accent); font-size: 14px; }
 
         .card-body {
             display: none;
@@ -115,63 +119,70 @@
         .card.open .card-body { display: block; }
         .card.open { border-color: var(--accent); }
 
-        .no-data { text-align: center; color: var(--text-dim); padding: 40px; }
+        .tag-label {
+            display: inline-block;
+            margin-top: 8px;
+            font-size: 10px;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .no-data { text-align: center; color: var(--text-dim); padding: 40px; font-size: 14px; }
+        
+        .arrow { font-size: 10px; color: #666; transition: transform 0.2s; }
+        .card.open .arrow { transform: rotate(180deg); }
     </style>
 </head>
 <body>
 
     <div class="header-fixed">
-        <input type="text" id="search" class="search-bar" placeholder="Поиск (дата или слово)..." autocomplete="off">
-<div class="filters">
-    <button class="filter-btn active" data-filter="Все">Все</button>
-    <button class="filter-btn" data-filter="16 век">16 век</button>
-    <button class="filter-btn" data-filter="17 век">17 век</button>
-    <button class="filter-btn" data-filter="Зарубежье">Зарубежье</button>
-    <button class="filter-btn" data-filter="Картинка">Картинки</button>
-    <button class="filter-btn" data-filter="Термин">Термины</button>
-    <button class="filter-btn" data-filter="Деятель">Деятели</button>
-    <button class="filter-btn" data-filter="Дата">Даты</button>
-</div>
+        <input type="text" id="search" class="search-bar" placeholder="Поиск (н-р: ивнгроз)..." autocomplete="off">
+        <div class="filters">
+            <button class="f-btn active" onclick="setFilter('Все', this)">Все</button>
+            <button class="f-btn" onclick="setFilter('Россия', this)">🇷🇺 Россия</button>
+            <button class="f-btn" onclick="setFilter('Мир', this)">🌍 Мир</button>
+            <button class="f-btn" onclick="setFilter('Дата', this)">📅 Даты</button>
+            <button class="f-btn" onclick="setFilter('Деятель', this)">👤 Деятели</button>
+            <button class="f-btn" onclick="setFilter('Термин', this)">📖 Термины</button>
+        </div>
     </div>
 
-    <div class="content" id="list">
-        </div>
+    <div class="content" id="list"></div>
 
 <script>
-    // ==========================================
-    // ПОЛЕ ДЛЯ ТВОИХ ДАННЫХ (МАССИВ)
-    // ==========================================
-    const historyDB = [
-        { name: "Опричнина", date: "1565-1572", info: "Личный удел царя Ивана Грозного с особым управлением, войском и территорией. Цель: борьба с боярской оппозицией.", tags: ["Россия", "Термин"] },
-        { name: "Варфоломеевская ночь", date: "1572", info: "Массовое избиение гугенотов (протестантов) во Франции, организованное католиками.", tags: ["Мир"] },
-        { name: "Михаил Романов", date: "1613", info: "Первый царь из династии Романовых. Избран Земским собором, положил конец Смутному времени.", tags: ["Россия", "Деятель"] },
-        { name: "Соборное уложение", date: "1649", info: "Свод законов России, принятый при Алексее Михайловиче. Установил бессрочный сыск беглых крестьян (крепостное право).", tags: ["Россия", "Термин"] },
-        // СЮДА ДОБАВЛЯЙ НОВЫЕ СТРОКИ
-    ];
+    // Твои данные будут здесь
+    const historyDB = [];
 
-    // ==========================================
-    // ЛОГИКА ПРИЛОЖЕНИЯ (НЕ ТРОГАТЬ)
-    // ==========================================
     let currentTag = 'Все';
+
+    // Умный поиск: игнорирует пробелы, регистр и ищет вхождения частей слов
+    function fuzzyMatch(item, query) {
+        const target = (item.name + item.date + item.info + item.tags.join('')).toLowerCase().replace(/\s/g, '');
+        const searchParts = query.toLowerCase().trim().split(/\s+/);
+        
+        return searchParts.every(part => {
+            const cleanPart = part.replace(/\s/g, '');
+            return target.includes(cleanPart);
+        });
+    }
 
     function render() {
         const list = document.getElementById('list');
-        const query = document.getElementById('search').value.toLowerCase();
+        const query = document.getElementById('search').value;
         list.innerHTML = '';
 
-        // Сортировка по алфавиту
+        // Сортировка по алфавиту для удобства
         const sortedDB = [...historyDB].sort((a, b) => a.name.localeCompare(b.name));
 
         const filtered = sortedDB.filter(item => {
-            const matchesSearch = item.name.toLowerCase().includes(query) || 
-                                  item.date.toLowerCase().includes(query) || 
-                                  item.info.toLowerCase().includes(query);
+            const matchesSearch = fuzzyMatch(item, query);
             const matchesTag = currentTag === 'Все' || item.tags.includes(currentTag);
             return matchesSearch && matchesTag;
         });
 
         if (filtered.length === 0) {
-            list.innerHTML = '<div class="no-data">Ничего не найдено</div>';
+            list.innerHTML = `<div class="no-data">${query ? 'Ничего не найдено' : 'База данных пуста'}</div>`;
             return;
         }
 
@@ -180,20 +191,30 @@
             card.className = 'card';
             card.innerHTML = `
                 <div class="card-header" onclick="toggleCard(this)">
-                    <div class="card-title">${item.name} <span>(${item.date})</span></div>
-                    <div style="font-size:10px; color:#666">▼</div>
+                    <div class="card-title">${item.name} <span>${item.date ? '('+item.date+')' : ''}</span></div>
+                    <div class="arrow">▼</div>
                 </div>
-                <div class="card-body">${item.info}</div>
+                <div class="card-body">
+                    ${item.info}
+                    <br>
+                    <span class="tag-label">#${item.tags.join(' #')}</span>
+                </div>
             `;
             list.appendChild(card);
         });
     }
 
     function toggleCard(header) {
-        header.parentElement.classList.toggle('open');
+        const card = header.parentElement;
+        const isOpen = card.classList.contains('open');
+        
+        // Закрыть другие карточки при открытии новой (опционально, для экономии места)
+        document.querySelectorAll('.card').forEach(c => c.classList.remove('open'));
+        
+        if (!isOpen) card.classList.add('open');
     }
 
-    function filter(tag, btn) {
+    function setFilter(tag, btn) {
         document.querySelectorAll('.f-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         currentTag = tag;
@@ -202,7 +223,7 @@
 
     document.getElementById('search').addEventListener('input', render);
     
-    // Первая отрисовка
+    // Инициализация
     render();
 </script>
 </body>
