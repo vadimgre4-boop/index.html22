@@ -294,7 +294,7 @@
 
     let currentTag = 'Все';
 
-  function fuzzyMatch(item, query) {
+   function fuzzyMatch(item, query) {
         let target = (item.name + (item.date || '') + item.info + item.tags.join('')).toLowerCase();
         const cleanQuery = query.toLowerCase().replace(/\s/g, '');
         for (let char of cleanQuery) {
@@ -324,7 +324,6 @@
         });
 
         if (filtered.length === 0) {
-            // ИСПРАВЛЕНО: Правильные обратные кавычки и удален лишний рендер
             list.innerHTML = <div class="no-data">${query ? 'Ничего не найдено' : 'База данных пуста'}</div>;
             return; 
         }
@@ -350,7 +349,6 @@
     function toggleCard(header) {
         const card = header.parentElement;
         const isOpen = card.classList.contains('open');
-        // ИСПРАВЛЕНО: Закрываем другие карточки правильно
         document.querySelectorAll('.card').forEach(c => c.classList.remove('open'));
         if (!isOpen) card.classList.add('open');
     }
@@ -362,7 +360,6 @@
         render();
     }
 
-    // ИСПРАВЛЕНО: Добавлен слушатель и стартовый запуск
     document.getElementById('search').addEventListener('input', render);
     render();
 </script>
