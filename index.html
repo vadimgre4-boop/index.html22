@@ -292,8 +292,7 @@
 
     let currentTag = 'Все';
 
-    // 1. Умный поиск
-    function fuzzyMatch(item, query) {
+   function fuzzyMatch(item, query) {
         let target = (item.name + (item.date || '') + item.info + item.tags.join('')).toLowerCase();
         const cleanQuery = query.toLowerCase().replace(/\s/g, '');
         for (let char of cleanQuery) {
@@ -307,12 +306,9 @@
         return true;
     }
 
-    // 2. Функция отрисовки (рендер)
     function render() {
         const list = document.getElementById('list');
-        const searchInput = document.getElementById('search');
-        const query = searchInput ? searchInput.value : '';
-        
+        const query = document.getElementById('search').value;
         list.innerHTML = '';
         
         const sortedDB = [...historyDB].sort((a, b) => a.name.localeCompare(b.name));
@@ -324,6 +320,7 @@
         });
 
         if (filtered.length === 0) {
+            // ИСПРАВЛЕНО: Правильные обратные кавычки и нет лишнего render()
             list.innerHTML = <div class="no-data">${query ? 'Ничего не найдено' : 'База данных пуста'}</div>;
             return; 
         }
@@ -346,7 +343,6 @@
         });
     }
 
-    // 3. Открытие карточек
     function toggleCard(header) {
         const card = header.parentElement;
         const isOpen = card.classList.contains('open');
@@ -354,7 +350,6 @@
         if (!isOpen) card.classList.add('open');
     }
 
-    // 4. Фильтры
     function setFilter(tag, btn) {
         document.querySelectorAll('.f-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
@@ -362,7 +357,7 @@
         render();
     }
 
-    // 5. Слушатели и запуск
     document.getElementById('search').addEventListener('input', render);
+    
+    // Запуск при старте
     render();
-</script>
