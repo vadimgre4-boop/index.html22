@@ -240,6 +240,7 @@
 
         // 1. Автоматическая сортировка по алфавиту
         historyData.sort((a, b) => a.title.localeCompare(b.title));
+
         const dataList = document.getElementById('dataList');
         const searchInput = document.getElementById('searchInput');
         const filterBtns = document.querySelectorAll('.filter-btn');
@@ -272,20 +273,20 @@
                 
                 let imgHtml = '';
                 if (item.image) {
-                    imgHtml = 
+                    imgHtml = `
                     <div class="card-img-container" onclick="openModal('${item.image}')">
                         <img src="${item.image}" alt="${item.title}">
-                    </div>;
+                    </div>`;
                 }
 
-                card.innerHTML = 
+                card.innerHTML = `
                     <div class="card-text">
                         <h3 class="card-title">${item.title}</h3>
                         <p class="card-desc">${item.desc}</p>
                         <div class="card-tags">${item.tags.join(', ')}</div>
                     </div>
                     ${imgHtml}
-                ;
+                `;
                 dataList.appendChild(card);
             });
         }
@@ -321,6 +322,3 @@
     </script>
 </body>
 </html>
-
-
-Вот мой код вставь туда все данные, что ты мне написал + в данные из зарубежной истории и добавь в кнопках под поиском. Ещё одну кнопку с поиском по картинкам я знаю, у тебя есть лимит по. Тексту, поэтому напиши мне сначала первую половину вторую, потом третью.
