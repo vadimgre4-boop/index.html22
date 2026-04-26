@@ -291,40 +291,28 @@
 ];
 
     let currentTag = 'Все';
-
-   // Ультра-поиск: ищет по отдельным разбросанным буквам в любом порядке
+   
+    // 1. Умный поиск (fuzzyMatch)
     function fuzzyMatch(item, query) {
-        // Склеиваем весь текст карточки в одну строку и переводим в нижний регистр
         let target = (item.name + (item.date || '') + item.info + item.tags.join('')).toLowerCase();
-        
-        // Убираем из запроса все пробелы и переводим в нижний регистр
         const cleanQuery = query.toLowerCase().replace(/\s/g, '');
-
-        // Проходимся по каждой букве из твоего запроса
         for (let char of cleanQuery) {
-            // Ищем эту букву в тексте карточки
             const index = target.indexOf(char);
-            
             if (index !== -1) {
-                // Если буква нашлась, "вырезаем" её из текста, 
-                // чтобы не посчитать одну и ту же букву дважды (например, если ищешь "ааа")
                 target = target.slice(0, index) + target.slice(index + 1);
             } else {
-                // Если хотя бы одной буквы из запроса нет в карточке — совпадения нет
                 return false;
             }
         }
-        
-        // Если цикл дошел до конца, значит все буквы нашлись
         return true;
     }
 
+    // 2. Главная функция отрисовки (render)
     function render() {
-    const list = document.getElementById('list');
-    const query = document.getElementById('search').value;
-        list.innerHTML=";
+        const list = document.getElementById('list');
+        const query = document.getElementById('search').value;
+        list.innerHTML = ''; // Очищаем список перед отрисовкой
         
-        // Сортировка по алфавиту для удобства
         const sortedDB = [...historyDB].sort((a, b) => a.name.localeCompare(b.name));
 
         const filtered = sortedDB.filter(item => {
@@ -333,51 +321,56 @@
             return matchesSearch && matchesTag;
         });
 
+        // Если ничего не нашли
         if (filtered.length === 0) {
-            list.innerHTML = ' <div class="no-data">${query ? 'Ничего не найдено' : 'База данных пуста'}</div>';
-            render();
+            list.innerHTML = <div class="no-data">${query ? 'Ничего не найдено' : 'База данных пуста'}</div>;
+            return; // Выходим из функции, чтобы не рисовать пустоту
         }
 
+        // Рисуем карточки
         filtered.forEach(item => {
             const card = document.createElement('div');
             card.className = 'card';
-            card.innerHTML = `
+            // Добавляем картинку, если она есть в базе
+            const imgHtml = item.img ? <img src="${item.img}" style="width:100%; border-radius:8px; margin-bottom:10px;"> : '';
+            
+            card.innerHTML = 
                 <div class="card-header" onclick="toggleCard(this)">
                     <div class="card-title">${item.name} <span>${item.date ? '('+item.date+')' : ''}</span></div>
                     <div class="arrow">▼</div>
                 </div>
                 <div class="card-body">
+                    ${imgHtml}
                     ${item.info}
                     <br>
                     <span class="tag-label">#${item.tags.join(' #')}</span>
                 </div>
-            `;
+            ;
             list.appendChild(card);
         });
     }
 
+    // 3. Открытие/закрытие карточек
     function toggleCard(header) {
         const card = header.parentElement;
         const isOpen = card.classList.contains('open');
-    }
-        
-        // Закрыть другие карточки при открытии новой (опционально, для экономии места)
+        // Закрываем другие карточки для удобства
         document.querySelectorAll('.card').forEach(c => c.classList.remove('open'));
-        
+        // Если была закрыта — открываем
         if (!isOpen) card.classList.add('open');
     }
 
+    // 4. Логика фильтров (кнопок)
     function setFilter(tag, btn) {
         document.querySelectorAll('.f-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         currentTag = tag;
-        render();
+        render(); // Перерисовываем список
     }
 
+    // Слушатель набора текста в поиске
     document.getElementById('search').addEventListener('input', render);
     
-    // Инициализация
+    // Запуск при загрузке страницы
     render();
 </script>
-</body>
-</html>
