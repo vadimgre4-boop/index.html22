@@ -1,10 +1,12 @@
-<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Шпаргалка ВПР История 7 класс</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>History Assistant v2.0</title>
     <style>
+        /* СТИЛИ: Тёмная тема для скрытности */
         :root {
             --bg-color: #f0f2f5;
             --card-bg: #ffffff;
@@ -12,19 +14,30 @@
             --text-muted: #666666;
             --accent: #007bff;
             --accent-hover: #0056b3;
+            --bg: #1a1a1a;
+            --surface: #2d2d2d;
+            --accent: #ff4757;
+            --text-main: #e0e0e0;
+            --text-dim: #a0a0a0;
+            --border: #3f3f3f;
         }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--bg-color);
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
             color: var(--text-main);
             margin: 0;
             padding: 0;
             padding-top: 130px; /* Отступ для фиксированной шапки */
+            padding-top: 110px; /* Место для шапки */
+            -webkit-tap-highlight-color: transparent;
         }
 
         /* Фиксированная шапка */
         .header {
+        .header-fixed {
             position: fixed;
             top: 0;
             left: 0;
@@ -33,12 +46,24 @@
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
             padding: 15px;
             z-index: 100;
+            top: 0; left: 0; right: 0;
+            background: var(--bg);
+            border-bottom: 1px solid var(--border);
+            padding: 10px 15px;
+            z-index: 1000;
         }
 
         /* Строка поиска */
         .search-box {
+        /* Поле поиска */
+        .search-bar {
             width: 100%;
             padding: 12px 15px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px;
+            color: white;
             font-size: 16px;
             border: 1px solid #ddd;
             border-radius: 12px;
@@ -51,11 +76,14 @@
         .search-box:focus {
             border-color: var(--accent);
         }
+        .search-bar:focus { border-color: var(--accent); }
 
         /* Овальные кнопки фильтров */
+        /* Фильтры (овальные кнопки) */
         .filters {
             display: flex;
             gap: 10px;
+            gap: 8px;
             overflow-x: auto;
             padding-bottom: 5px;
             scrollbar-width: none; /* Скрытие скроллбара Firefox */
@@ -63,7 +91,10 @@
         
         .filters::-webkit-scrollbar {
             display: none; /* Скрытие скроллбара Chrome/Safari */
+            padding: 10px 0;
+            scrollbar-width: none;
         }
+        .filters::-webkit-scrollbar { display: none; }
 
         .filter-btn {
             background-color: #e4e6eb;
@@ -73,13 +104,24 @@
             font-size: 14px;
             color: var(--text-main);
             cursor: pointer;
+        .f-btn {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text-dim);
+            padding: 6px 14px;
+            border-radius: 20px;
             white-space: nowrap;
             transition: all 0.2s;
+            font-size: 13px;
+            cursor: pointer;
         }
 
         .filter-btn.active {
             background-color: var(--accent);
+        .f-btn.active {
+            background: var(--accent);
             color: white;
+            border-color: var(--accent);
         }
 
         /* Список данных */
@@ -88,6 +130,8 @@
             max-width: 800px;
             margin: 0 auto;
         }
+        /* Список элементов */
+        .content { padding: 0 10px 20px; }
 
         .card {
             background-color: var(--card-bg);
@@ -98,10 +142,22 @@
             display: flex;
             gap: 15px;
             align-items: flex-start;
+            background: var(--surface);
+            border-radius: 8px;
+            margin-bottom: 8px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            transition: all 0.2s;
         }
 
         .card-text {
             flex-grow: 1;
+        .card-header {
+            padding: 12px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
         }
 
         .card-title {
@@ -115,6 +171,7 @@
             font-size: 15px;
             line-height: 1.5;
             margin: 0 0 10px 0;
+            font-weight: 600;
         }
 
         .card-tags {
@@ -125,6 +182,7 @@
             border-radius: 8px;
             display: inline-block;
         }
+        .card-title span { color: var(--accent); margin-left: 5px; }
 
         /* Работа с картинками */
         .card-img-container {
@@ -145,6 +203,7 @@
 
         /* Модальное окно для полноэкранной картинки */
         .modal {
+        .card-body {
             display: none;
             position: fixed;
             top: 0;
@@ -157,6 +216,12 @@
             align-items: center;
             padding: 20px;
             backdrop-filter: blur(5px);
+            padding: 12px 15px;
+            background: #252525;
+            border-top: 1px solid var(--border);
+            font-size: 14px;
+            line-height: 1.5;
+            color: var(--text-dim);
         }
 
         .modal img {
@@ -165,6 +230,8 @@
             border-radius: 12px;
             box-shadow: 0 5px 25px rgba(0,0,0,0.5);
         }
+        .card.open .card-body { display: block; }
+        .card.open { border-color: var(--accent); }
 
         .no-results {
             text-align: center;
@@ -172,25 +239,32 @@
             margin-top: 50px;
             font-size: 16px;
         }
+        .no-data { text-align: center; color: var(--text-dim); padding: 40px; }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <input type="text" id="searchInput" class="search-box" placeholder="🔍 Поиск)">
-<div class="filters">
-    <button class="filter-btn active" data-filter="Все">Все</button>
-    <button class="filter-btn" data-filter="16 век">16 век</button>
-    <button class="filter-btn" data-filter="17 век">17 век</button>
-    <button class="filter-btn" data-filter="Зарубежье">Зарубежье</button>
-    <button class="filter-btn" data-filter="Картинка">🖼️ Картинки</button>
-    <button class="filter-btn" data-filter="Термин">Термины</button>
-    <button class="filter-btn" data-filter="Деятель">Деятели</button>
-    <button class="filter-btn" data-filter="Дата">Даты</button>
-</div>
+        <input type="text" id="searchInput" class="search-box" placeholder="🔍 Поиск (например: Опричнина, 1565...)">
+    <div class="header-fixed">
+        <input type="text" id="search" class="search-bar" placeholder="Поиск (дата или слово)..." autocomplete="off">
+        <div class="filters">
+            <button class="filter-btn active" data-filter="Все">Все</button>
+            <button class="filter-btn" data-filter="16 век">16 век</button>
+            <button class="filter-btn" data-filter="17 век">17 век</button>
+            <button class="filter-btn" data-filter="Термин">Термины</button>
+            <button class="filter-btn" data-filter="Деятель">Деятели</button>
+            <button class="filter-btn" data-filter="Дата">Даты</button>
+            <button class="f-btn active" onclick="filter('Все', this)">Все</button>
+            <button class="f-btn" onclick="filter('Россия', this)">Россия</button>
+            <button class="f-btn" onclick="filter('Мир', this)">Мир</button>
+            <button class="f-btn" onclick="filter('Термин', this)">Термины</button>
+            <button class="f-btn" onclick="filter('Деятель', this)">Деятели</button>
+        </div>
     </div>
 
     <div class="content" id="dataList">
+    <div class="content" id="list">
         </div>
 
     <div id="imageModal" class="modal">
@@ -304,6 +378,37 @@
                 currentFilter = btn.getAttribute('data-filter');
                 renderCards();
             });
+<script>
+    // ==========================================
+    // ПОЛЕ ДЛЯ ТВОИХ ДАННЫХ (МАССИВ)
+    // ==========================================
+    const historyDB = [
+        { name: "Опричнина", date: "1565-1572", info: "Личный удел царя Ивана Грозного с особым управлением, войском и территорией. Цель: борьба с боярской оппозицией.", tags: ["Россия", "Термин"] },
+        { name: "Варфоломеевская ночь", date: "1572", info: "Массовое избиение гугенотов (протестантов) во Франции, организованное католиками.", tags: ["Мир"] },
+        { name: "Михаил Романов", date: "1613", info: "Первый царь из династии Романовых. Избран Земским собором, положил конец Смутному времени.", tags: ["Россия", "Деятель"] },
+        { name: "Соборное уложение", date: "1649", info: "Свод законов России, принятый при Алексее Михайловиче. Установил бессрочный сыск беглых крестьян (крепостное право).", tags: ["Россия", "Термин"] },
+        // СЮДА ДОБАВЛЯЙ НОВЫЕ СТРОКИ
+    ];
+
+    // ==========================================
+    // ЛОГИКА ПРИЛОЖЕНИЯ (НЕ ТРОГАТЬ)
+    // ==========================================
+    let currentTag = 'Все';
+
+    function render() {
+        const list = document.getElementById('list');
+        const query = document.getElementById('search').value.toLowerCase();
+        list.innerHTML = '';
+
+        // Сортировка по алфавиту
+        const sortedDB = [...historyDB].sort((a, b) => a.name.localeCompare(b.name));
+
+        const filtered = sortedDB.filter(item => {
+            const matchesSearch = item.name.toLowerCase().includes(query) || 
+                                  item.date.toLowerCase().includes(query) || 
+                                  item.info.toLowerCase().includes(query);
+            const matchesTag = currentTag === 'Все' || item.tags.includes(currentTag);
+            return matchesSearch && matchesTag;
         });
 
         // Логика модального окна для картинок
@@ -317,10 +422,44 @@
 
         modal.addEventListener('click', () => {
             modal.style.display = 'none';
+        if (filtered.length === 0) {
+            list.innerHTML = '<div class="no-data">Ничего не найдено</div>';
+            return;
+        }
+
+        filtered.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `
+                <div class="card-header" onclick="toggleCard(this)">
+                    <div class="card-title">${item.name} <span>(${item.date})</span></div>
+                    <div style="font-size:10px; color:#666">▼</div>
+                </div>
+                <div class="card-body">${item.info}</div>
+            `;
+            list.appendChild(card);
         });
 
         // Первичная отрисовка
         renderCards();
     </script>
+    }
+
+    function toggleCard(header) {
+        header.parentElement.classList.toggle('open');
+    }
+
+    function filter(tag, btn) {
+        document.querySelectorAll('.f-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentTag = tag;
+        render();
+    }
+
+    document.getElementById('search').addEventListener('input', render);
+    
+    // Первая отрисовка
+    render();
+</script>
 </body>
 </html>
