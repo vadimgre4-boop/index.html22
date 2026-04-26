@@ -322,6 +322,7 @@
     function render() {
     const list = document.getElementById('list');
     const query = document.getElementById('search').value;
+        
         // Сортировка по алфавиту для удобства
         const sortedDB = [...historyDB].sort((a, b) => a.name.localeCompare(b.name));
 
