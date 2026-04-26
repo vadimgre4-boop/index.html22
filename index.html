@@ -291,8 +291,8 @@
 ];
 
     let currentTag = 'Все';
-   
-    // 1. Умный поиск (fuzzyMatch)
+
+    // 1. Умный поиск
     function fuzzyMatch(item, query) {
         let target = (item.name + (item.date || '') + item.info + item.tags.join('')).toLowerCase();
         const cleanQuery = query.toLowerCase().replace(/\s/g, '');
@@ -307,11 +307,13 @@
         return true;
     }
 
-    // 2. Главная функция отрисовки (render)
+    // 2. Функция отрисовки (рендер)
     function render() {
         const list = document.getElementById('list');
-        const query = document.getElementById('search').value;
-        list.innerHTML = ''; // Очищаем список перед отрисовкой
+        const searchInput = document.getElementById('search');
+        const query = searchInput ? searchInput.value : '';
+        
+        list.innerHTML = '';
         
         const sortedDB = [...historyDB].sort((a, b) => a.name.localeCompare(b.name));
 
@@ -321,26 +323,20 @@
             return matchesSearch && matchesTag;
         });
 
-        // Если ничего не нашли
         if (filtered.length === 0) {
             list.innerHTML = <div class="no-data">${query ? 'Ничего не найдено' : 'База данных пуста'}</div>;
-            return; // Выходим из функции, чтобы не рисовать пустоту
+            return; 
         }
 
-        // Рисуем карточки
         filtered.forEach(item => {
             const card = document.createElement('div');
             card.className = 'card';
-            // Добавляем картинку, если она есть в базе
-            const imgHtml = item.img ? <img src="${item.img}" style="width:100%; border-radius:8px; margin-bottom:10px;"> : '';
-            
             card.innerHTML = 
                 <div class="card-header" onclick="toggleCard(this)">
                     <div class="card-title">${item.name} <span>${item.date ? '('+item.date+')' : ''}</span></div>
                     <div class="arrow">▼</div>
                 </div>
                 <div class="card-body">
-                    ${imgHtml}
                     ${item.info}
                     <br>
                     <span class="tag-label">#${item.tags.join(' #')}</span>
@@ -350,27 +346,23 @@
         });
     }
 
-    // 3. Открытие/закрытие карточек
+    // 3. Открытие карточек
     function toggleCard(header) {
         const card = header.parentElement;
         const isOpen = card.classList.contains('open');
-        // Закрываем другие карточки для удобства
         document.querySelectorAll('.card').forEach(c => c.classList.remove('open'));
-        // Если была закрыта — открываем
         if (!isOpen) card.classList.add('open');
     }
 
-    // 4. Логика фильтров (кнопок)
+    // 4. Фильтры
     function setFilter(tag, btn) {
         document.querySelectorAll('.f-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         currentTag = tag;
-        render(); // Перерисовываем список
+        render();
     }
 
-    // Слушатель набора текста в поиске
+    // 5. Слушатели и запуск
     document.getElementById('search').addEventListener('input', render);
-    
-    // Запуск при загрузке страницы
     render();
 </script>
