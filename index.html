@@ -322,6 +322,7 @@
     function render() {
     const list = document.getElementById('list');
     const query = document.getElementById('search').value;
+        list.innerHTML=";
         
         // Сортировка по алфавиту для удобства
         const sortedDB = [...historyDB].sort((a, b) => a.name.localeCompare(b.name));
@@ -358,6 +359,7 @@
     function toggleCard(header) {
         const card = header.parentElement;
         const isOpen = card.classList.contains('open');
+    }
         
         // Закрыть другие карточки при открытии новой (опционально, для экономии места)
         document.querySelectorAll('.card').forEach(c => c.classList.remove('open'));
